@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Meet App</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
+    
+
+    <!-- <script src='../node_modules/socket.io/client-dist/socket.io.js'></script> -->
+   
+</head>
+<body>
+    <div class="main-container " id="main-box">
+    
+        <div class="connect-container" id="connect-box">
+            <div class="heading">
+                <h1>WebRTC Meet</h1>
+            </div>
+            
+            <div class="sample-video-container flexCol">
+                <video class="video-stream-container" id="sample-video" autoplay="true" muted="muted"></video>
+            </div>        
+            <div class="flexRow" id="answer-offer-box">
+                <div id="offer-box" class="flexCol maxWidth">
+                    <!-- <h1>Paste Key</h1>
+                    <textarea id="offer-answer-area" class="textBoxArea"></textarea> -->
+                    <button id="create-offer-answer">Create Offer / Answer</button>
+                </div>
+                <!-- <div id="answer-box" class="flexCol maxWidth">
+                    <h2>Answer</h2>
+                    <textarea id="answer-area" class="textBoxArea"></textarea>
+                    <button id="add-answer">Add Answer</button>
+                    <button id="create-answer">Create Answer</button>
+                </div>
+                <div id="ice-box" class="flexCol maxWidth">
+                    <h2>ICE</h2>
+                    <textarea id="ice-area" class="textBoxArea"></textarea>
+                    <button id="add-ice">Add ICE</button>
+                    <button id="create-ice">Create ICE</button>
+                
+                </div> -->
+            </div>
+            <!-- <div class="flexCol"> 
+                <button id="submit-answer">Submit Answer</button>
+            </div> -->
+            
+            
+            </br>
+            
+
+        </div>
+        
+        <div class="video-container" id="video-box">
+            <video class="video-stream-container" id="local" autoplay="true" muted="muted"></video>
+            <video class="video-stream-container" id="remote" autoplay="true" ></video>
+        </div>
+    
+        <div class="chat-container" id="chat-box">
+            <h5>Chats</h5>
+            <div class="all-chats" id="all-chats-id">
+            
+            </div>
+            <textarea id="send-messege" class="chatBoxArea"></textarea>
+            <div class="flexRow">
+                <button id="send-button">Send</button>
+                <button id="end-button" onclick="window.location.reload()">End Call</button>
+            </div>
+            
+        </div>
+    </div>
+<!-- </br>
+<video id="localVideo" autoplay muted></video>
+</br>
+<video id="remoteVideo" autoplay></video>. -->
+<!-- <div class="video-container" id="video-box">
+    <video class="video-stream-container" id="local" autoplay playsinline></video>
+    <video class="video-stream-container" id="remote" autoplay playsinline></video>
+</div>
+</br>
+<textarea id='offer-area' class="textBoxArea"></textarea>
+</br>
+<button id='offer-button'>Offer Create</button>
+</br>
+<h2>Answer area</h2>
+<textarea id="answer-area" class="textBoxArea"></textarea>
+</br>
+<button id='create-answer-button'>Create Answer</button>
+</br>
+<button id='add-answer-button'>add Answer</button>
+
+</br>
+<h2>Ice area</h2>
+<textarea id="ice-area" class="textBoxArea"></textarea>
+</br>
+<button id='add-ice-button'>Add ice </button>
+</br>
+<button id="tmp">TMPPP</button> -->
+</body>
+
+<!-- <script src="https://cdn.socket.io/4.4.1/socket.io.esm.min.js"></script> -->
+<script src='../node_modules/socket.io-client/dist/socket.io.js'></script>
+ <script src='app.js' type="module"></script> 
+<!-- <script type="module">
+    //var io = require('socket.io');
+
+
+</script> -->
+</html>

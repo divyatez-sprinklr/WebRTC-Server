@@ -1,0 +1,185 @@
+*{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 4px;
+    font-family: "Segoe UI";
+    
+}
+.heading{
+    width: 100%;
+    background-color: #303030;
+    border-radius: 10px;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+h1{
+    font-family: sans-serif;
+    font-style: italic;
+    color: 	#B8B8B8;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 20px;
+}
+
+.connect-container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    width: 100%;
+}
+.video-container{
+    width: 90vw;
+    background-color:transparent;
+    row-gap: 20px;
+}
+
+.video-stream-container{
+    border-radius: 3%;
+    object-fit: cover;
+}
+
+.chat-container{
+    background-color: 	#181818;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+    width: 90vw;
+    max-height: 80vh;
+    border-radius: 10px;
+
+}
+
+.all-chats{
+    width: 90%;
+    background-color: 	#181818;
+    padding: 5px;
+    max-height: 30vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.chats{
+    /* background-color: rgb(106, 166, 219); */
+    background-color: #080808;
+    padding: 10px;
+    margin-bottom: 0px;
+    border-radius: 5px;
+    color: #FAFBFC;
+    max-width: 70%;
+    overflow-wrap: break-word;
+
+
+}
+
+.sender{
+    align-self: flex-start;
+}
+
+.me{
+    align-self: flex-end;
+}
+
+h2{
+    background-color: white;
+}
+
+#send-button{
+    width: 200px;
+    background-color: aliceblue;
+}
+
+
+
+
+.icon{
+    border-width: 30ch;
+    padding: 20px;
+    border-radius: 50%;
+    height: 2em;
+    width: 2em;
+    object-fit: cover;
+    cursor: pointer;
+
+}
+
+.flexCol{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.flexRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    
+}
+
+button{
+  background-color: #FAFBFC;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  color: #101113;
+  cursor: pointer;
+  font-family: "Segoe UI";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  padding: 6px 16px;
+
+}
+
+.icon-container{
+    border-radius: 50%;
+    border-color: #24292E;
+    background-color: #24292E;
+}
+
+
+.textBoxArea{
+    width: 90%;
+    height: 20vh;
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+    resize: none;
+}
+
+.chatBoxArea{
+    width: 90%;
+    height: 20vh;
+    background-color: #303030;
+    border-radius: 0px;
+    color: #FAFBFC;
+}
+
+.maxWidth{
+    width: 100%;
+}
+#sample-video{
+
+    height: 20em;
+    border-radius: 10px;
+}
+
+#end-button{
+    background-color: darkred;
+}
+
+h5{
+    color: #FAFBFC;
+    font-size: x-large;
+    font-style: oblique;
+    margin: 4px;
+
+}
