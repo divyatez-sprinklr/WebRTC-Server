@@ -56,7 +56,16 @@
             <video class="video-stream-container" id="local" autoplay="true" muted="muted"></video>
             <video class="video-stream-container" id="remote" autoplay="true" ></video>
         </div>
-    
+        <div class="video-container" id="video-box">
+            <video class="video-stream-container" id="local-screen-share" autoplay="true" muted="muted"></video>
+            <video class="video-stream-container" id="remote-screen-share" autoplay="true" muted></video>
+        </div>
+        <div class="media-options flexRow">
+            <button class="media-control-btn flexCol flexRow" id="video-pause-button"><img class='media-control-btn-icon' src="icons/camera.png" ></button>
+            <button class="media-control-btn  flexCol flexRow" id="audio-pause-button"><img class='media-control-btn-icon' src="icons/audio.png" ></button>
+            <button class="media-control-btn  flexCol flexRow" id="screen-share-button"><img class='media-control-btn-icon' src="icons/upload.png" ></button>
+            <button class="media-control-btn flexCol flexRow" id="end-button" onclick="window.location.reload()"><img class='media-control-btn-icon' src="icons/phone.png" ></button>
+        </div>
         <div class="chat-container" id="chat-box">
             <h5>Chats</h5>
             <div class="all-chats" id="all-chats-id">
@@ -65,7 +74,7 @@
             <textarea id="send-messege" class="chatBoxArea"></textarea>
             <div class="flexRow">
                 <button id="send-button">Send</button>
-                <button id="end-button" onclick="window.location.reload()">End Call</button>
+                
             </div>
             
         </div>

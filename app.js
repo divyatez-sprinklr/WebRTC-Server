@@ -12,6 +12,9 @@ let videoContainer = document.getElementById('video-box');
 
 let localVideo = document.getElementById('local');
 let remoteVideo = document.getElementById('remote');
+let localScreenShare = document.getElementById('local-screen-share');
+let remoteScreenShare = document.getElementById('remote-screen-share');
+
 let createOfferAnswerButton = document.getElementById('create-offer-answer');
 let sendMessegeButton = document.getElementById('send-button');
 let sendMessegeTextArea = document.getElementById('send-messege');
@@ -23,6 +26,8 @@ let offerAnswerTextArea = document.getElementById('offer-answer-area');
 
 let offer={description:"",candidate:""};
 let answer={description:"",candidate:""};;
+let screenSharetoogle=false;
+let ssStreamTrack=[];
 
 function onSuccess() {};
 function onError(error) {console.error(error);};
@@ -177,12 +182,26 @@ function startWebRTC(isOfferer) {
     });
 
 
-  
+  let flg =0;
     connection.ontrack = event => {
       const stream = event.streams[0];
-      if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
+    //   if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
+    //     remoteVideo.srcObject = stream;
+    //   }
+
+      if(flg==0)
+      {
         remoteVideo.srcObject = stream;
+        flg++;
       }
+      else{
+          remoteScreenShare.srcObject = stream;
+      }
+      
+    
+    //   if()
+    //   const sstream = event.streams[1];
+      console.log("Event streams are: " + event.streams.length);
     };
   
     navigator.mediaDevices.getUserMedia({
@@ -192,9 +211,56 @@ function startWebRTC(isOfferer) {
       localVideo.srcObject = stream;
       document.getElementById('sample-video').srcObject = stream;
 
-      stream.getTracks().forEach(track => connection.addTrack(track, stream));
+      stream.getTracks().forEach(track => connection.addTrack(track, stream))
+    
     }, onError);
-  
+
+    navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: true,
+      }).then(stream => {
+       
+        stream.getTracks().forEach(track => {ssStreamTrack.push(connection.addTrack(track, stream));})
+        console.log(stream.getTracks());
+        console.log('ss track is ');
+        console.log(ssStreamTrack);
+        localScreenShare.srcObject = stream;
+
+    }, onError);
+
+    document.getElementById('screen-share-button').addEventListener('click',()=>{
+        if(screenSharetoogle==false){
+            navigator.mediaDevices.getDisplayMedia().then(stream => {
+                localScreenShare.srcObject = stream;
+                console.log('stream is ');
+                console.log(localScreenShare.srcObject);
+                // stream.getTracks().forEach(track => connection.addTrack(track, stream));
+                console.log("length is "+ connection.track);
+                ssStreamTrack[0].replaceTrack(stream.getTracks()[0]);
+            }, onError);
+        }
+        else{
+
+        }
+    });
+
+    
+    document.getElementById('video-pause-button').addEventListener('click',()=>{
+        console.log('clicked video toogle');
+        console.log(localVideo.srcObject.getTracks());
+        console.log(localVideo.srcObject.getTracks()[1].enabled);
+        localVideo.srcObject.getTracks()[1].enabled = !localVideo.srcObject.getTracks()[1].enabled ;
+        console.log(localVideo.srcObject.getTracks()[1].enabled);
+    });
+    
+    document.getElementById('audio-pause-button').addEventListener('click',()=>{
+        console.log('clicked video toogle');
+        console.log(localVideo.srcObject.getTracks());
+        console.log(localVideo.srcObject.getTracks()[0].enabled);
+        localVideo.srcObject.getTracks()[0].enabled = !localVideo.srcObject.getTracks()[0].enabled ;
+        console.log(localVideo.srcObject.getTracks()[0].enabled);
+    });
+
     function addIce(candidates){
         //let messege = ustr(offerAnswerTextArea.value);
        let messege = ustr(candidates);
