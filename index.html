@@ -24,47 +24,34 @@
             </div>        
             <div class="flexRow" id="answer-offer-box">
                 <div id="offer-box" class="flexCol maxWidth">
-                    <!-- <h1>Paste Key</h1>
-                    <textarea id="offer-answer-area" class="textBoxArea"></textarea> -->
-                    <button id="create-offer-answer">Create Offer / Answer</button>
+                    <button id="create-offer-answer">Start</button>
                 </div>
-                <!-- <div id="answer-box" class="flexCol maxWidth">
-                    <h2>Answer</h2>
-                    <textarea id="answer-area" class="textBoxArea"></textarea>
-                    <button id="add-answer">Add Answer</button>
-                    <button id="create-answer">Create Answer</button>
-                </div>
-                <div id="ice-box" class="flexCol maxWidth">
-                    <h2>ICE</h2>
-                    <textarea id="ice-area" class="textBoxArea"></textarea>
-                    <button id="add-ice">Add ICE</button>
-                    <button id="create-ice">Create ICE</button>
-                
-                </div> -->
             </div>
-            <!-- <div class="flexCol"> 
-                <button id="submit-answer">Submit Answer</button>
-            </div> -->
-            
-            
+          
             </br>
             
 
         </div>
         
+        <!-- <div class="video-container flexRow" id="video-box-2">
+            <video class="video-stream-container" id="local-screen-share" autoplay="true" muted="muted"></video>
+            <video class="video-stream-container" id="remote-screen-share" autoplay="true" muted></video>
+        </div> -->
+        <div class="video-main-stream">
+            <video class="video-main-stream" id="main-stream" autoplay="true" muted="muted"></video>
+        </div>
         <div class="video-container" id="video-box">
             <video class="video-stream-container" id="local" autoplay="true" muted="muted"></video>
             <video class="video-stream-container" id="remote" autoplay="true" ></video>
-        </div>
-        <div class="video-container" id="video-box">
             <video class="video-stream-container" id="local-screen-share" autoplay="true" muted="muted"></video>
             <video class="video-stream-container" id="remote-screen-share" autoplay="true" muted></video>
         </div>
-        <div class="media-options flexRow">
+        
+        <div class="media-options flexRow" id="media-options-box">
             <button class="media-control-btn flexCol flexRow" id="video-pause-button"><img class='media-control-btn-icon' src="icons/camera.png" ></button>
             <button class="media-control-btn  flexCol flexRow" id="audio-pause-button"><img class='media-control-btn-icon' src="icons/audio.png" ></button>
             <button class="media-control-btn  flexCol flexRow" id="screen-share-button"><img class='media-control-btn-icon' src="icons/upload.png" ></button>
-            <button class="media-control-btn flexCol flexRow" id="end-button" onclick="window.location.reload()"><img class='media-control-btn-icon' src="icons/phone.png" ></button>
+            <button class="media-control-btn flexCol flexRow" id="end-button" onclick="window.location.reload()"><img class='media-control-btn-icon' src="icons/phone.png" ></button> 
         </div>
         <div class="chat-container" id="chat-box">
             <h5>Chats</h5>
@@ -79,33 +66,7 @@
             
         </div>
     </div>
-<!-- </br>
-<video id="localVideo" autoplay muted></video>
-</br>
-<video id="remoteVideo" autoplay></video>. -->
-<!-- <div class="video-container" id="video-box">
-    <video class="video-stream-container" id="local" autoplay playsinline></video>
-    <video class="video-stream-container" id="remote" autoplay playsinline></video>
-</div>
-</br>
-<textarea id='offer-area' class="textBoxArea"></textarea>
-</br>
-<button id='offer-button'>Offer Create</button>
-</br>
-<h2>Answer area</h2>
-<textarea id="answer-area" class="textBoxArea"></textarea>
-</br>
-<button id='create-answer-button'>Create Answer</button>
-</br>
-<button id='add-answer-button'>add Answer</button>
 
-</br>
-<h2>Ice area</h2>
-<textarea id="ice-area" class="textBoxArea"></textarea>
-</br>
-<button id='add-ice-button'>Add ice </button>
-</br>
-<button id="tmp">TMPPP</button> -->
 </body>
 
 <!-- <script src="https://cdn.socket.io/4.4.1/socket.io.esm.min.js"></script> -->

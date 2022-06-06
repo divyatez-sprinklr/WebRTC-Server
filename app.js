@@ -22,13 +22,15 @@ let offerAnswerBox = document.getElementById('answer-offer-box');
 let submitButton = document.getElementById('submit');
 
 
+let buttonPrimaryColorGreen = '#49B568';
+
 let offerAnswerTextArea = document.getElementById('offer-answer-area');
 
 let offer={description:"",candidate:""};
 let answer={description:"",candidate:""};;
 let screenSharetoogle=false;
 let ssStreamTrack=[];
-
+let screenShareCount=0;
 function onSuccess() {};
 function onError(error) {console.error(error);};
 function str(obj){return JSON.stringify(obj);};
@@ -37,13 +39,13 @@ function ustr(obj){return JSON.parse(obj);}
 
 let setupConnection = async () => {
     initialCSS();
-    startWebRTC(false);
+    startWebRTC();
 }
 let state =0;
 let socket = io('http://127.0.0.1:8080/'); 
 socket.on('connect', () => { console.log(socket.id) });
 
-function startWebRTC(isOfferer) {
+function startWebRTC() {
 
     console.log('Starting webrtc');
     connection = new RTCPeerConnection({
@@ -100,10 +102,21 @@ function startWebRTC(isOfferer) {
 
         const receiveChannel = e.channel;
         receiveChannel.onmessage =e => {
-            addMessege(2,"Sender : "+e.data);
+            if(ustr(e.data).type=='system')
+            {
+                if(ustr(e.data).message=='SCREEN_SHARE_OPENED'){
+                    toggleRemoteStreamShare();
+                    handleScreenShareBox();
+                }
+                else if(ustr(e.data).message=='SCREEN_SHARE_CLOSED'){
+                    toggleRemoteStreamShare();
+                    handleScreenShareBox();
+                }
+            }
+            else
+                addMessege(2,"Sender : "+ustr(e.data).message);
         } 
         receiveChannel.onopen = e => {
-            console.log("Open Text Channnel.");
             startMeet();
         }
         receiveChannel.onclose =e => console.log("Closed Text Channel.");
@@ -113,30 +126,15 @@ function startWebRTC(isOfferer) {
 
     connection.onicecandidate = (event) => {
       if (event.candidate) {
-          console.log(str(event.candidate));
         exchange.push(str(event.candidate));
       }
     };
 
     socket.on('message', (obj) => {
-        console.log('recieving a message',ustr(obj));
-    //     let { description, candidate} = ustr(obj);
-    //     description = ustr(description);
-    //     candidate = ustr(candidate);
-    //    // localConnection.setRemoteDescription(description).then(() => { console.log("Sender: answer accepted") });
-    
-    //     // adding proposed icecandidates
-    //     icecandidates.forEach(candidate => {
-    //         localConnection.addIceCandidate(new RTCIceCandidate(candidate));
-    //     });
-    
-        //else{
             let message = ustr(obj);
-         //   console.log(message);
             if(ustr(message.description).type=='offer'&&state===0)
             {
                 state = 2;
-                console.log('Submit offer type');
                 connection.setRemoteDescription(new RTCSessionDescription(ustr(message.description)), () => {
                     connection.createAnswer().then(handleLocalDescription).then(addIce(message.candidate));
                     setTimeout(createIceAnswer,1000);
@@ -144,7 +142,6 @@ function startWebRTC(isOfferer) {
             }
             else if(ustr(message.description).type=='answer'&&state===1)
             {
-                console.log('sbmit answer type');
                 connection.setRemoteDescription(new RTCSessionDescription(ustr(message.description)), () => {
                     addIce(message.candidate);
                 });
@@ -154,40 +151,16 @@ function startWebRTC(isOfferer) {
     })
   
     createOfferAnswerButton.addEventListener('click',() =>{
-        state =1;
-        //if(offerAnswerTextArea.value==''){
+            state =1;
             connection.createOffer().then(handleLocalDescription).catch(onError);
             setTimeout(createIceOffer,1000);
-        //}
-    //     else{
-    //         let message = JSON.parse(offerAnswerTextArea.value);
-    //         console.log(message);
-    //         if(ustr(message.description).type=='offer')
-    //         {
-    //             console.log('Submit offer type');
-    //             connection.setRemoteDescription(new RTCSessionDescription(ustr(message.description)), () => {
-    //                 connection.createAnswer().then(handleLocalDescription).then(addIce);
-    //                 setTimeout(createIceAnswer,1000);
-    //             });
-    //         }
-    //         else
-    //         {
-    //             console.log('sbmit answer type');
-    //             connection.setRemoteDescription(new RTCSessionDescription(ustr(message.description)), () => {
-    //                 addIce(message.candidates);
-    //             });
-
-    //         }
-    // }
+    
     });
 
 
-  let flg =0;
+    let flg =0;
     connection.ontrack = event => {
       const stream = event.streams[0];
-    //   if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
-    //     remoteVideo.srcObject = stream;
-    //   }
 
       if(flg==0)
       {
@@ -195,13 +168,11 @@ function startWebRTC(isOfferer) {
         flg++;
       }
       else{
-          remoteScreenShare.srcObject = stream;
+        remoteScreenShare.srcObject = stream;
+        toggleRemoteStreamShare();
+        handleScreenShareBox();
+
       }
-      
-    
-    //   if()
-    //   const sstream = event.streams[1];
-      console.log("Event streams are: " + event.streams.length);
     };
   
     navigator.mediaDevices.getUserMedia({
@@ -210,7 +181,7 @@ function startWebRTC(isOfferer) {
     }).then(stream => {
       localVideo.srcObject = stream;
       document.getElementById('sample-video').srcObject = stream;
-
+    
       stream.getTracks().forEach(track => connection.addTrack(track, stream))
     
     }, onError);
@@ -221,22 +192,24 @@ function startWebRTC(isOfferer) {
       }).then(stream => {
        
         stream.getTracks().forEach(track => {ssStreamTrack.push(connection.addTrack(track, stream));})
-        console.log(stream.getTracks());
-        console.log('ss track is ');
-        console.log(ssStreamTrack);
         localScreenShare.srcObject = stream;
-
+        toogleLocalStreamShare();
     }, onError);
 
     document.getElementById('screen-share-button').addEventListener('click',()=>{
         if(screenSharetoogle==false){
             navigator.mediaDevices.getDisplayMedia().then(stream => {
                 localScreenShare.srcObject = stream;
-                console.log('stream is ');
-                console.log(localScreenShare.srcObject);
-                // stream.getTracks().forEach(track => connection.addTrack(track, stream));
-                console.log("length is "+ connection.track);
+                localScreenShare.srcObject.oninactive = function (){
+                    toogleLocalStreamShare();
+                    handleScreenShareBox();
+                    sentOverDataStream('system','SCREEN_SHARE_CLOSED');
+                }            
                 ssStreamTrack[0].replaceTrack(stream.getTracks()[0]);
+                handleScreenShareBox();              
+                sentOverDataStream('system','SCREEN_SHARE_OPENED');
+                
+
             }, onError);
         }
         else{
@@ -244,29 +217,23 @@ function startWebRTC(isOfferer) {
         }
     });
 
+
+
     
     document.getElementById('video-pause-button').addEventListener('click',()=>{
-        console.log('clicked video toogle');
-        console.log(localVideo.srcObject.getTracks());
-        console.log(localVideo.srcObject.getTracks()[1].enabled);
+        toggleMediaOptionButtonColor(document.getElementById('video-pause-button'));
         localVideo.srcObject.getTracks()[1].enabled = !localVideo.srcObject.getTracks()[1].enabled ;
-        console.log(localVideo.srcObject.getTracks()[1].enabled);
     });
     
     document.getElementById('audio-pause-button').addEventListener('click',()=>{
-        console.log('clicked video toogle');
-        console.log(localVideo.srcObject.getTracks());
-        console.log(localVideo.srcObject.getTracks()[0].enabled);
+        toggleMediaOptionButtonColor(document.getElementById('audio-pause-button'));
         localVideo.srcObject.getTracks()[0].enabled = !localVideo.srcObject.getTracks()[0].enabled ;
-        console.log(localVideo.srcObject.getTracks()[0].enabled);
     });
 
+
     function addIce(candidates){
-        //let messege = ustr(offerAnswerTextArea.value);
        let messege = ustr(candidates);
-        //document.getElementById('ice-area').value = "";
         messege.forEach((item) =>{
-            console.log(item);
             let candidate = JSON.parse(item);
             connection.addIceCandidate(
               new RTCIceCandidate(candidate), onSuccess, onError
@@ -277,22 +244,16 @@ function startWebRTC(isOfferer) {
 
 
     function createIceOffer(){
-        offer.candidate = str(exchange);
-        console.log('sending offer');
-        //offerAnswerTextArea.value = str(offer);    
+        offer.candidate = str(exchange); 
         socket.emit('message',str(offer));
     }
 
     function createIceAnswer(){
         answer.candidate = str(exchange);
-       // offerAnswerTextArea.value = str(answer);
-        console.log('sending answer',answer);
         socket.emit('message',str(answer));
     }
 
     function handleLocalDescription(description) {
-        console.log(str(description));
-        console.log('handle local desc');
         connection.setLocalDescription(description);
         if(description.type==='offer'){
             offer.description = str(description); 
@@ -300,7 +261,79 @@ function startWebRTC(isOfferer) {
         else{
             answer.description = str(description);
         }
-        console.log('conpleted');
+    }
+
+    function toogleLocalStreamShare(){
+        localScreenShare.srcObject.getTracks()[0].enabled = !localScreenShare.srcObject.getTracks()[0].enabled;
+    }
+
+    function toggleRemoteStreamShare(){
+        remoteScreenShare.srcObject.getTracks()[0].enabled = !remoteScreenShare.srcObject.getTracks()[0].enabled ;
+    }
+
+
+    
+}
+
+
+function getVisibleStream(){
+    let count=2;
+    if(localScreenShare.srcObject.getTracks()[0].enabled) count++;
+    if(remoteScreenShare.srcObject.getTracks()[0].enabled) count++;
+    return count;
+}
+
+
+function handleScreenShareBox(){
+    
+    let localStreamActive =  localScreenShare.srcObject.getTracks()[0].enabled;
+    let remoteStreamActive = remoteScreenShare.srcObject.getTracks()[0].enabled;
+    if(localStreamActive)
+        localScreenShare.style.display = 'flex';
+    else
+        localScreenShare.style.display = 'none';
+
+    if(remoteStreamActive)
+        remoteScreenShare.style.display = 'flex';
+    else
+        remoteScreenShare.style.display = 'none';
+    handleView();
+}
+
+function videoEventListenersAdd(){
+    document.querySelectorAll('.video-stream-container').forEach(item => {
+        item.addEventListener('click',()=>{
+            console.log('clicked');
+            console.log(item.srcObject);
+            document.getElementById('main-stream').srcObject = item.srcObject;
+            console.log(document.getElementById('main-stream').srcObject);
+        })
+    })
+}
+
+function handleView(){
+    console.log('Handle View Called');
+    let count = getVisibleStream();
+    console.log(count);
+    document.querySelectorAll('.video-stream-container').forEach(item => {
+        item.style.width = `${100/count}%`
+        console.log(item);
+    })
+
+    if(count>2){
+        document.getElementById('video-box').style.height = `20vh`;
+        document.querySelectorAll('.video-stream-container').forEach(item => {
+            item.style.width = `20vh`;
+            console.log(item);
+        });
+        document.getElementById('main-stream').srcObject = localVideo.srcObject;
+        document.getElementById('main-stream').style.display = 'flex';
+        document.getElementById('main-stream').style.height = `60vh`;
+    }
+    else{
+        document.getElementById('video-box').style.height = `80vh`
+        document.getElementById('main-stream').style.display = 'none';
+
     }
 
 
@@ -319,9 +352,17 @@ function addMessege(a,messege){
     updateScroll();
 }
 
+
+function sentOverDataStream(type,message){
+    textChannelStream.send(str({
+        type: type,
+        message: message
+    }));
+}
+
 function onSend(){
     addMessege(1,"Me: "+sendMessegeTextArea.value);
-    textChannelStream.send(sendMessegeTextArea.value);
+    sentOverDataStream('user',sendMessegeTextArea.value);
     sendMessegeTextArea.value="";
     document.activeElement.blur();
 
@@ -332,19 +373,31 @@ function startMeet(){
     hideDetails();
     unhideVideo();
     document.getElementsByTagName("BODY")[0].style.backgroundColor ='#121212';
+    handleView();
+    videoEventListenersAdd();
 }
 
 function initialCSS(){
-    
+    localScreenShare.style.display = 'none';
+    document.getElementById('screen-share-button').style.display = 'none';
+    document.getElementById('end-button').style.display = 'none';
     mainContainer.classList.add('flexCol');
     document.getElementById('video-box').style.display='none';
     document.getElementById('chat-box').style.display='none';
+    remoteScreenShare.style.display = 'none';
+    localScreenShare.style.display = 'none';
     document.getElementsByTagName("BODY")[0].style.backgroundColor ='#202020';
+
+    document.getElementById('video-pause-button').style.backgroundColor = buttonPrimaryColorGreen;
+    document.getElementById('audio-pause-button').style.backgroundColor = buttonPrimaryColorGreen;
+
 }
 
 function unhideVideo(){
     document.getElementById('video-box').style.display='flex';
     document.getElementById('chat-box').style.display='flex';
+    document.getElementById('screen-share-button').style.display = 'flex';
+    document.getElementById('end-button').style.display = 'flex';
 }
 
 function hideDetails(){
@@ -354,14 +407,13 @@ function hideDetails(){
 
 function updateScroll(){
     const chats = document.getElementById('all-chats-id');
-    console.log("running");
     chats.scrollTop = chats.scrollHeight - chats.clientHeight;
 
 }
 
 
 sendMessegeButton.addEventListener('click', onSend);
-window.addEventListener('resize', handleResponsive , true);
+//window.addEventListener('resize', handleResponsive , true);
 sendMessegeTextArea.onkeypress = (event)=> {
      console.log(event.keyCode);
     if(event.keyCode==13){ event.preventDefault();
@@ -371,9 +423,6 @@ sendMessegeTextArea.onkeypress = (event)=> {
 setupConnection()
 
 
-
-// // Responsive
-
 function isEllipsisActive(e) {
     return (e.offsetWidth < e.scrollWidth);
 }
@@ -382,18 +431,17 @@ function isEllipsisActive(e) {
 
 function handleResponsive(event) {
     console.log(window.innerHeight + " "+ window.innerWidth);
-    if(window.innerWidth<600)
-    {
-        handleResponsiveOverflow();  
-    }
-    else 
-    {
-        handleResponsiveUnderflow();
-    }
+    // if(window.innerWidth<600)
+    // {
+    //     handleResponsiveOverflow();  
+    // }
+    // else 
+    // {
+    //     handleResponsiveUnderflow();
+    // }
 }
 
 function  handleResponsiveOverflow(){
-    //offerAnswerBox.classList.pop();
     console.log(offerAnswerBox.classList);
     offerAnswerBox.classList.remove('flexRow');
     offerAnswerBox.classList.add('flexCol');
@@ -417,4 +465,30 @@ function  handleResponsiveUnderflow(){
     localVideo.style.width= "45vw";
     remoteVideo.style.height = "50vh";
     remoteVideo.style.width = "45vw";
+}
+function hexToRGB(h) {
+    let r = 0, g = 0, b = 0;
+  
+    // 3 digits
+    if (h.length == 4) {
+      r = "0x" + h[1] + h[1];
+      g = "0x" + h[2] + h[2];
+      b = "0x" + h[3] + h[3];
+  
+    // 6 digits
+    } else if (h.length == 7) {
+      r = "0x" + h[1] + h[2];
+      g = "0x" + h[3] + h[4];
+      b = "0x" + h[5] + h[6];
+    }
+    
+    return "rgb("+ +r + ", " + +g + ", " + +b + ")";
+  }
+
+function toggleMediaOptionButtonColor(element){
+    if(element.style.backgroundColor=='#49B568'||element.style.backgroundColor==hexToRGB('#49B568'))
+        element.style.backgroundColor='#121212'    
+    else
+        element.style.backgroundColor='#49B568';
+
 }
