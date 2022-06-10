@@ -1,11 +1,11 @@
 # WebRTCApp
 
+### New Terminal
 ```
-##New Terminal
 cd server
 node server.js
-
-##New Terminal
+```
+### New Terminal
+```
 start live server
-
 ```
