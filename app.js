@@ -25,11 +25,14 @@ let submitButton = document.getElementById('submit');
 let buttonPrimaryColorGreen = '#49B568';
 
 let offerAnswerTextArea = document.getElementById('offer-answer-area');
+var chunkLength = 1000;
 
 let offer={description:"",candidate:""};
 let answer={description:"",candidate:""};;
 let screenSharetoogle=false;
 let ssStreamTrack=[];
+var arrayToStoreChunks = [];
+
 let screenShareCount=0;
 function onSuccess() {};
 function onError(error) {console.error(error);};
@@ -42,8 +45,8 @@ let setupConnection = async () => {
     startWebRTC();
 }
 let state =0;
-let socket = io('http://127.0.0.1:8080/'); 
-socket.on('connect', () => { console.log(socket.id) });
+// let socket = io('http://127.0.0.1:8080/'); 
+// socket.on('connect', () => { console.log(socket.id) });
 
 function startWebRTC() {
 
@@ -102,6 +105,7 @@ function startWebRTC() {
 
         const receiveChannel = e.channel;
         receiveChannel.onmessage =e => {
+            console.log('Messege recived');
             if(ustr(e.data).type=='system')
             {
                 if(ustr(e.data).message=='SCREEN_SHARE_OPENED'){
@@ -111,6 +115,15 @@ function startWebRTC() {
                 else if(ustr(e.data).message=='SCREEN_SHARE_CLOSED'){
                     toggleRemoteStreamShare();
                     handleScreenShareBox();
+                }
+            }
+            else if(ustr(e.data).type=='file-share'){
+                var data = ustr(e.data).message;
+                arrayToStoreChunks.push(data.message); // pushing chunks in array
+                if (data.last) {
+                    //console.log(arrayToStoreChunks.join(''));
+                    download(`${data.name}`,arrayToStoreChunks.join(''));
+                    arrayToStoreChunks = []; // resetting array
                 }
             }
             else
@@ -123,6 +136,18 @@ function startWebRTC() {
 
     }
 
+    function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:jpg;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+    
+        element.style.display = 'none';
+        document.body.appendChild(element);
+    
+        element.click();
+    
+        document.body.removeChild(element);
+    }
 
     connection.onicecandidate = (event) => {
       if (event.candidate) {
@@ -130,7 +155,10 @@ function startWebRTC() {
       }
     };
 
-    socket.on('message', (obj) => {
+  //  socket.on('message', (obj) => {
+    document.getElementById('submit-offer-answer').addEventListener('click', function (){
+            console.log('clicked');
+            let obj = document.getElementById('offer-answer-area').value;
             let message = ustr(obj);
             if(ustr(message.description).type=='offer'&&state===0)
             {
@@ -148,7 +176,8 @@ function startWebRTC() {
     
             }
         //}
-    })
+    }
+    )
   
     createOfferAnswerButton.addEventListener('click',() =>{
             state =1;
@@ -245,12 +274,14 @@ function startWebRTC() {
 
     function createIceOffer(){
         offer.candidate = str(exchange); 
-        socket.emit('message',str(offer));
+        document.getElementById('offer-answer-area').value = str(offer);
+        // socket.emit('message',str(offer));
     }
 
     function createIceAnswer(){
         answer.candidate = str(exchange);
-        socket.emit('message',str(answer));
+        //socket.emit('message',str(answer));
+        document.getElementById('offer-answer-area').value = str(answer);
     }
 
     function handleLocalDescription(description) {
@@ -270,6 +301,39 @@ function startWebRTC() {
     function toggleRemoteStreamShare(){
         remoteScreenShare.srcObject.getTracks()[0].enabled = !remoteScreenShare.srcObject.getTracks()[0].enabled ;
     }
+    var name= "";
+    
+    document.getElementById('fileshare').onchange = function(){
+            console.log('file share invoked');
+            var file = this.files[0];
+            name  = file.name;
+            var reader = new window.FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = onReadAsDataURL;
+    }
+
+        function onReadAsDataURL(event, text) {
+            var data = {}; // data object to transmit over data channel
+        
+            if (event) text = event.target.result; // on first invocation
+        
+            if (text.length > chunkLength) {
+                data.message = text.slice(0, chunkLength); // getting chunk using predefined chunk length
+            } else {
+                data.message = text;
+                data.last = true;
+                data.name = name;
+
+            }
+        
+            sentOverDataStream('file-share',data); // use JSON.stringify for chrome!
+        
+            var remainingDataURL = text.slice(data.message.length);
+            if (remainingDataURL.length) setTimeout(function () {
+                onReadAsDataURL(null, remainingDataURL); // continue transmitting
+            }, 500)
+        }
+    
 
 
     

@@ -260,7 +260,14 @@ h5{
       padding-left: 2%;
       padding-right: 2%;
   }
-
+  #submit-offer-answer{
+    background-color: rgba(255, 0, 0, 0.4);
+    padding: 20px;
+    border-radius: 30px;
+    color: #FAFBFC;
+    padding-left: 2%;
+    padding-right: 2%;
+}
   #create-offer-answer:hover{
     background-color: rgba(0, 132, 255, 0.952);
 }
