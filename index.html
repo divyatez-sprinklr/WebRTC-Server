@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Meet App</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='styles.css'>
+    
+
+    <!-- <script src='../node_modules/socket.io/client-dist/socket.io.js'></script> -->
+   
+</head>
+<body>
+    <div class="body-comtainer" >
+    
+        <div class="connect-container" id="connect-box">
+            <div class="heading">
+                <h1>WebRTC Meet</h1>
+            </div>
+           
+            <div class="sample-video-container flexCol">
+                <div class="video_box">
+                    <div class="video_overlays">
+                        <img class='video-icon' src="icons/audio.png" id="overlay-sample-audio-icon">
+                    </div>
+                    <div>
+                        <video class="video-stream-container" id="sample-video" autoplay="true" muted="muted"></video>  
+                    </div>
+                </div>
+            </div>  
+            
+            <div class="media-options flexRow" id="media-options-box">
+                <button class="media-control-btn flexCol flexRow" id="video-pause-button"><img class='media-control-btn-icon' src="icons/camera.png" ></button>
+                <button class="media-control-btn  flexCol flexRow" id="audio-pause-button"><img class='media-control-btn-icon' src="icons/audio.png" ></button>
+            </div>
+            <div class="flexCol" id="answer-offer-box">
+                <textarea id="offer-answer-area" class="offer-text-area"></textarea>
+                <div id="offer-box" class="flexRow maxWidth">
+                    <button id="create-offer-answer">Start</button>
+                    <button id="submit-offer-answer">Submit</button>
+                </div>
+            </div>    
+        </div>
+    
+        <div class="main-container flexCol" id="main-box" >
+            <div id="focus-stream-box">
+                <video class="video-stream-container" id="main-stream" autoplay="true"></video>
+            </div>
+            <div class="video-container flexRow" id="video-box" >
+                <div class="video_box">
+                    <div class="video_overlays" id="overlay-local-audio-icon">
+                        <img class='video-icon' src="icons/audio.png">
+                    </div>
+                    <div>
+                        <video class="video-stream-container non-focus-video-stream-container" id="local" autoplay="true" muted="muted"></video>
+                    </div>
+                </div>
+                <div class="video_box">
+                    <div class="video_overlays" id="overlay-remote-audio-icon">
+                        <img class='video-icon' src="icons/audio.png">
+                    </div>
+                    <div>
+                        <video class="video-stream-container non-focus-video-stream-container" id="remote" autoplay="true" ></video>    
+                    </div>
+                </div>
+                <div class="video_box" id="screen-share-local-box">
+                    <div class="video_overlays" >
+                        <img class='video-icon' src="icons/audio.png">
+                    </div>
+                    <div>
+                        <video class="video-stream-container" id="local-screen-share" autoplay="true" muted="muted"></video>
+                    </div>
+                </div>
+                <div class="video_box" id="screen-share-remote-box">
+                    <div class="video_overlays">
+                        <img class='video-icon' src="icons/audio.png">
+                    </div>
+                    <div>
+                        <video class="video-stream-container" id="remote-screen-share" autoplay="true" muted></video>
+                    </div>
+                </div>
+
+
+
+            </div>
+                
+                <div class="media-options flexRow" id="media-options-box-2">
+                    <button class="media-control-btn flexCol flexRow" id="video-pause-button-2"><img class='media-control-btn-icon' src="icons/camera.png" ></button>
+                    <button class="media-control-btn  flexCol flexRow" id="audio-pause-button-2"><img class='media-control-btn-icon' src="icons/audio.png" ></button>
+                    <button class="media-control-btn  flexCol flexRow" id="screen-share-button-2"><img class='media-control-btn-icon' src="icons/upload.png" ></button>
+                    <button class="media-control-btn flexCol flexRow" id="end-button" ><img class='media-control-btn-icon' src="icons/phone.png" ></button> 
+                </div>
+                <div class="chat-container" id="chat-box">
+                    <div class="sub-heading">Chats</div>
+                    <div class="divider-line"></div>
+                    <div class="all-chats" id="all-chats-id">
+                    </div>
+                    <textarea id="send-messege" class="chatBoxArea"></textarea>
+                    <!-- <div class="flexRow">
+                        <button id="send-button">Send</button>
+                        <input type="file"  id="fileshare" name="avatar" >    
+                    </div> -->
+                    
+                </div>
+        </div>
+    </div>
+   
+    
+</body>
+
+<!-- <script src="https://cdn.socket.io/4.4.1/socket.io.esm.min.js"></script> -->
+<!-- <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script> -->
+<script src='../node_modules/socket.io-client/dist/socket.io.js'></script>
+ <script src='app.js' type="module"></script> 
+<!-- <script type="module">
+    //var io = require('socket.io');
+
+
+</script> -->
+</html>
